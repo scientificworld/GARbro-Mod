@@ -200,6 +200,9 @@
     <Compile Include="Omi\ArcDAT.cs" />
     <Compile Include="Paprika\ArcPKDAT.cs" />
     <Compile Include="Paprika\ImageNP.cs" />
+    <Compile Include="Peach\ArcDAT.cs" />
+    <Compile Include="Peach\ArcNIJI.cs" />
+    <Compile Include="Peach\ArcPAK.cs" />
     <Compile Include="Pearl\ArcARY.cs" />
     <Compile Include="Pearl\ImagePL4.cs" />
     <Compile Include="PenguinWorks\ArcDAT.cs" />
