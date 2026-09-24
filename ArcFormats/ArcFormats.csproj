@@ -546,7 +546,6 @@
     <Compile Include="StudioJikkenshitsu\WidgetSJDAT.xaml.cs">
       <DependentUpon>WidgetSJDAT.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StudioSakura\ArcDAT.cs" />
     <Compile Include="Silky\ImageGRD.cs" />
     <Compile Include="Slg\ArcSPD.cs" />
     <Compile Include="SoftwareHouseParsley\ArcCG.cs" />
