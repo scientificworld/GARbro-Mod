@@ -224,6 +224,7 @@
     <Compile Include="BlueGale\ImageBBM.cs" />
     <Compile Include="ClickTeam\ArcMF.cs" />
     <Compile Include="DxLib\ArcDX8.cs" />
+    <Compile Include="Hecate\ArcDAT.cs" />
     <Compile Include="HuneX\ArcHFA.cs" />
     <Compile Include="HuneX\ArcMZP.cs" />
     <Compile Include="HuneX\Decoder.cs" />
