@@ -77,6 +77,65 @@ namespace GameRes.Formats.Peach
             return new ArcFile (file, this, dir);
         }
 
+        public override Stream OpenEntry (ArcFile arc, Entry entry)
+        {
+            if (entry.Type != "audio")
+                return base.OpenEntry (arc, entry);
+
+            byte[] output;
+            uint pcm_size;
+            using (var input = arc.File.CreateStream (entry.Offset, entry.Size))
+            {
+                pcm_size = input.ReadUInt32();
+                input.ReadUInt32(); // packed size
+                output = new byte[pcm_size + 0x2C];
+                UnpackPcm (input, output, 0x2C);
+            }
+
+            var format = new WaveFormat {
+                FormatTag = 1,
+                Channels = 1,
+                SamplesPerSecond = 22050,
+                BlockAlign = 2,
+                BitsPerSample = 16,
+            };
+            format.SetBPS();
+            using (var mem = new MemoryStream())
+            {
+                WaveAudio.WriteRiffHeader (mem, format, pcm_size);
+                mem.Position = 0;
+                mem.Read (output, 0, 0x2C);
+            }
+
+            return new BinMemoryStream (output);
+        }
+
+        public static void UnpackPcm (IBinaryStream input, byte[] output, int dst)
+        {
+            while (dst < output.Length)
+            {
+                int v = RqfBitmapDecoder.ReadByte (input);
+                if (v == 0)
+                {
+                    v = RqfBitmapDecoder.ReadByte (input);
+                    for (int i = 0; i <= v; i++)
+                    {
+                        output[dst++] = RqfBitmapDecoder.ReadByte (input);
+                        output[dst++] = RqfBitmapDecoder.ReadByte (input);
+                    }
+                }
+                else
+                {
+                    byte b = RqfBitmapDecoder.ReadByte (input);
+                    for (int i = 0; i < v; i++)
+                    {
+                        output[dst++] = RqfBitmapDecoder.ReadByte (input);
+                        output[dst++] = b;
+                    }
+                }
+            }
+        }
+
         public override IImageDecoder OpenImage (ArcFile arc, Entry entry)
         {
             var input = arc.OpenBinaryEntry (entry);
@@ -111,33 +170,7 @@ namespace GameRes.Formats.Peach
             m_input.Position = 4;
             int strike = Info.iWidth * 3;
             var pixels = new byte[strike * Info.iHeight];
-            int dst = 0;
-            while (dst < pixels.Length)
-            {
-                int v = ReadByte();
-                if (v == 0)
-                {
-                    v = ReadByte();
-                    for (int i = 0; i <= v; i++)
-                    {
-                        pixels[dst++] = ReadByte();
-                        pixels[dst++] = ReadByte();
-                        pixels[dst++] = ReadByte();
-                    }
-                }
-                else
-                {
-                    byte b = ReadByte();
-                    byte g = ReadByte();
-                    byte r = ReadByte();
-                    for (int i = 0; i <= v; i++)
-                    {
-                        pixels[dst++] = b;
-                        pixels[dst++] = g;
-                        pixels[dst++] = r;
-                    }
-                }
-            }
+            UnpackRle (m_input, pixels, 3);
             Info.BPP = 24;
             return ImageData.CreateFlipped (Info, PixelFormats.Bgr24, null, pixels, strike);
         }
@@ -147,35 +180,45 @@ namespace GameRes.Formats.Peach
             m_input.Position = 4;
             int strike = Info.iWidth;
             var pixels = new byte[strike * Info.iHeight];
-            int dst = 0;
-            while (dst < pixels.Length)
-            {
-                int v = ReadByte();
-                if (v == 0)
-                {
-                    v = ReadByte();
-                    for (int i = 0; i <= v; i++)
-                    {
-                        byte b = ReadByte();
-                        pixels[dst++] = b;
-                    }
-                }
-                else
-                {
-                    byte b = ReadByte();
-                    for (int i = 0; i <= v; i++)
-                    {
-                        pixels[dst++] = b;
-                    }
-                }
-            }
+            UnpackRle (m_input, pixels, 1);
             Info.BPP = 8;
             return ImageData.CreateFlipped (Info, PixelFormats.Gray8, null, pixels, strike);
         }
 
-        byte ReadByte ()
+        static void UnpackRle (IBinaryStream input, byte[] output, int bytes_pp)
         {
-            int b = m_input.ReadByte();
+            int dst = 0;
+            while (dst < output.Length)
+            {
+                int v = ReadByte (input);
+                if (v == 0)
+                {
+                    v = ReadByte (input);
+                    for (int i = 0; i <= v; i++)
+                    {
+                        for (int j = 0; j < bytes_pp; j++)
+                            output[dst++] = ReadByte (input);
+                    }
+                }
+                else
+                {
+                    var a = new byte[bytes_pp];
+                    for (int i = 0; i < bytes_pp; i++)
+                    {
+                        a[i] = ReadByte (input);
+                    }
+                    for (int i = 0; i <= v; i++)
+                    {
+                        for (int j = 0; j < bytes_pp; j++)
+                            output[dst++] = a[j];
+                    }
+                }
+            }
+        }
+
+        public static byte ReadByte (IBinaryStream input)
+        {
+            int b = input.ReadByte();
             if (b == -1)
                 throw new EndOfStreamException();
             return (byte)b;

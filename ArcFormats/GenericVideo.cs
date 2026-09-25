@@ -33,6 +33,7 @@ namespace GameRes.Formats
     public class WmvOpener : ArchiveFormat
     {
         public override string         Tag => "GENERIC WMV";
+        public override string Description => "Generic Windows Media Video Format"; // will not display
         public override uint     Signature => 0x75B22630;
         public override bool  IsHierarchic => false;
         public override bool      CanWrite => false;
@@ -49,6 +50,7 @@ namespace GameRes.Formats
     public class AviOpener : ArchiveFormat
     {
         public override string         Tag => "GENERIC AVI";
+        public override string Description => "Generic Audio Video Interleave Format";
         public override uint     Signature => 0x46464952; // 'RIFF'
         public override bool  IsHierarchic => false;
         public override bool      CanWrite => false;
@@ -65,6 +67,7 @@ namespace GameRes.Formats
     public class MpgOpener : ArchiveFormat
     {
         public override string         Tag => "GENERIC MPG";
+        public override string Description => "Generic MPEG Video Format";
         public override uint     Signature => 0xBA010000;
         public override bool  IsHierarchic => false;
         public override bool      CanWrite => false;
