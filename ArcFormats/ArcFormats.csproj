@@ -809,6 +809,7 @@
     <Compile Include="Sviu\ArcKLZ.cs" />
     <Compile Include="Sviu\ArcPKZ.cs" />
     <Compile Include="Sviu\AudioKOG.cs" />
+    <Compile Include="Sviu\AudioKPV.cs" />
     <Compile Include="Sviu\ImageGBP.cs" />
     <Compile Include="Sviu\ImageJBP.cs" />
     <Compile Include="Sviu\ImageKBP.cs" />

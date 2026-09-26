@@ -89,7 +89,7 @@ namespace GameRes.Formats.Peach
                 pcm_size = input.ReadUInt32();
                 input.ReadUInt32(); // packed size
                 output = new byte[pcm_size + 0x2C];
-                UnpackPcm (input, output, 0x2C);
+                RqfBitmapDecoder.UnpackRle (input, output, 2, 0x2C);
             }
 
             var format = new WaveFormat {
@@ -108,32 +108,6 @@ namespace GameRes.Formats.Peach
             }
 
             return new BinMemoryStream (output);
-        }
-
-        public static void UnpackPcm (IBinaryStream input, byte[] output, int dst)
-        {
-            while (dst < output.Length)
-            {
-                int v = RqfBitmapDecoder.ReadByte (input);
-                if (v == 0)
-                {
-                    v = RqfBitmapDecoder.ReadByte (input);
-                    for (int i = 0; i <= v; i++)
-                    {
-                        output[dst++] = RqfBitmapDecoder.ReadByte (input);
-                        output[dst++] = RqfBitmapDecoder.ReadByte (input);
-                    }
-                }
-                else
-                {
-                    byte b = RqfBitmapDecoder.ReadByte (input);
-                    for (int i = 0; i < v; i++)
-                    {
-                        output[dst++] = RqfBitmapDecoder.ReadByte (input);
-                        output[dst++] = b;
-                    }
-                }
-            }
         }
 
         public override IImageDecoder OpenImage (ArcFile arc, Entry entry)
@@ -185,9 +159,8 @@ namespace GameRes.Formats.Peach
             return ImageData.CreateFlipped (Info, PixelFormats.Gray8, null, pixels, strike);
         }
 
-        static void UnpackRle (IBinaryStream input, byte[] output, int bytes_pp)
+        internal static void UnpackRle (IBinaryStream input, byte[] output, int bytes_pp, int dst = 0)
         {
-            int dst = 0;
             while (dst < output.Length)
             {
                 int v = ReadByte (input);
@@ -200,7 +173,7 @@ namespace GameRes.Formats.Peach
                             output[dst++] = ReadByte (input);
                     }
                 }
-                else
+                else if (bytes_pp != 2)
                 {
                     var a = new byte[bytes_pp];
                     for (int i = 0; i < bytes_pp; i++)
@@ -213,10 +186,19 @@ namespace GameRes.Formats.Peach
                             output[dst++] = a[j];
                     }
                 }
+                else // for audio
+                {
+                    byte b = ReadByte (input);
+                    for (int i = 0; i < v; i++)
+                    {
+                        output[dst++] = ReadByte (input);
+                        output[dst++] = b;
+                    }
+                }
             }
         }
 
-        public static byte ReadByte (IBinaryStream input)
+        static byte ReadByte (IBinaryStream input)
         {
             int b = input.ReadByte();
             if (b == -1)
