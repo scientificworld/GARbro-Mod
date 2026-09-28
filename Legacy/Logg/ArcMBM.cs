@@ -42,9 +42,14 @@ namespace GameRes.Formats.Logg
         public override bool  IsHierarchic => false;
         public override bool      CanWrite => false;
 
+        public MbmOpener ()
+        {
+            Extensions = new[] { "mbm", "bmm" };
+        }
+
         public override ArcFile TryOpen (ArcView file)
         {
-            if (!file.Name.HasExtension ("MBM"))
+            if (!file.Name.HasAnyOfExtensions ("MBM", "BMM"))
                 return null;
             var index = GetArchiveIndex (file);
             if (null == index)
@@ -77,6 +82,8 @@ namespace GameRes.Formats.Logg
             { 0x0AB0F5F4, "logg_pl.lst" },
             { 0x0BFFD3DA, "logg_ak.lst" },
             { 0x09809196, "logg_th.lst" },
+            { 0x0DF6B008, "nanami_gs.lst" },
+            { 0x09408218, "nanami_kk.lst" },
         };
 
         static IDictionary<uint, string> ReadFileList (string list_name)
