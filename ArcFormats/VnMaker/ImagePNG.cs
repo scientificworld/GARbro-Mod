@@ -22,7 +22,7 @@ namespace GameRes.Formats.VnMaker
             using (var input = DeobfuscateStream (file, GuessEncryptionKey (file)))
             {
                 if (input.Signature != 0x474E5089)
-                    throw new InvalidFormatException ();
+                    return null;
                 return base.ReadMetaData (input);
             }
         }

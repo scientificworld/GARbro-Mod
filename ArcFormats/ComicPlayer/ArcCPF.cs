@@ -58,6 +58,8 @@ namespace GameRes.Formats.ComicPlayer
             {
                 var exe = new ExeFile (file);
                 base_offset = (uint)exe.Overlay.Offset + 0x100;
+                if (base_offset > file.MaxOffset)
+                    return null;
             }
             var valid_magics = new List<string> { "ICM95", "CMINST", "CM3PKG", "CM3LIB" };
             var magic = file.View.ReadString (base_offset, 8);

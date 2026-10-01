@@ -21,7 +21,7 @@ namespace GameRes.Formats.VnMaker
             using (var input = DeobfuscateStream (file, GuessEncryptionKey (file)))
             {
                 if (input.Signature != 0x5367674F)
-                    throw new InvalidFormatException ();
+                    return null;
                 return new OggInput (input.AsStream);
             }
         }

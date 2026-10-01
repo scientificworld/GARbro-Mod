@@ -79,7 +79,7 @@ namespace GameRes.Formats.VnMaker
             {
                 var zip = DeobfuscateStream (input, GuessEncryptionKey (input));
                 if ((zip.Signature & 0xFFFF) != 0x4B50) // 'PK'
-                    throw new InvalidFormatException ();
+                    return null;
                 return OpenZipArchive (file, zip.AsStream);
             }
             catch

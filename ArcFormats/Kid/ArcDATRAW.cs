@@ -29,7 +29,7 @@ namespace GameRes.Formats.Kid
                 size *= 1024;
                 if (offset > file.MaxOffset || size > file.MaxOffset)
                 {
-                    throw new InvalidFormatException();
+                    return null;
                 }
                 if (size == 0) continue;
 

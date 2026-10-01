@@ -54,6 +54,8 @@ namespace GameRes.Formats.ComicPlayer
             {
                 var exe = new ExeFile (file);
                 base_offset = (uint)exe.Overlay.Offset + 0x100;
+                if (base_offset > file.MaxOffset)
+                    return null;
             }
             var magic = file.View.ReadString (base_offset, 8);
             if (magic != "CM3PKG")

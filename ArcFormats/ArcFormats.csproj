@@ -678,6 +678,7 @@
     <Compile Include="ImageLZ.cs" />
     <Compile Include="Dogenzaka\ImageRSA.cs" />
     <Compile Include="KiriKiri\ChainReactionCrypt.cs" />
+    <Compile Include="KiriKiri\CroixCrypt.cs" />
     <Compile Include="Liar\ImageLIM.cs" />
     <Compile Include="LiveMaker\ImageGAL.cs" />
     <Compile Include="LiveMaker\WidgetGAL.xaml.cs">
