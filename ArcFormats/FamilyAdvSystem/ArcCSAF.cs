@@ -30,6 +30,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using GameRes.Formats.Strings;
 using GameRes.Utility;
 
 namespace GameRes.Formats.FamilyAdvSystem
@@ -38,6 +39,11 @@ namespace GameRes.Formats.FamilyAdvSystem
     public class FamilyAdvScheme : ResourceScheme
     {
         public IDictionary<string, string>  KnownKeys;
+    }
+
+    public class CsafOptions : ResourceOptions
+    {
+        public string Title;
     }
 
     [Export(typeof(ArchiveFormat))]
@@ -54,7 +60,6 @@ namespace GameRes.Formats.FamilyAdvSystem
             Extensions = new string[] { "" };
         }
 
-        static readonly string DefaultKey = "江ノ島の南";
         static readonly byte[] DefaultIV = Encoding.ASCII.GetBytes ("FamilyAdvSystem ");
 
         public override ArcFile TryOpen (ArcView file)
@@ -76,6 +81,8 @@ namespace GameRes.Formats.FamilyAdvSystem
                 if (is_encrypted)
                 {
                     var key = QueryEncryptionKey (file);
+                    if (null == key)
+                        return null;
                     file.View.Read (0x20, index, 0, index_size);
                     enc = new CsafEncryption (key, DefaultIV);
                     using (var decryptor = enc.CreateDecryptor (0))
@@ -143,14 +150,39 @@ namespace GameRes.Formats.FamilyAdvSystem
             return new StreamRegion (input, entry.Offset, entry.Size);
         }
 
+        public override ResourceOptions GetDefaultOptions ()
+        {
+            return new CsafOptions { Title = Properties.Settings.Default.CSAFTitle };
+        }
+
+        public override object GetAccessWidget ()
+        {
+            return new GUI.WidgetCSAF (this);
+        }
+
         internal string QueryEncryptionKey (ArcView file)
         {
-            var title = FormatCatalog.Instance.LookupGame (file.Name);
-            if (string.IsNullOrEmpty (title))
-                return DefaultKey;
+            var dir = VFS.GetDirectoryName (file.Name);
+            var exe_files = VFS.GetFiles (VFS.CombinePath (dir, "*.exe"));
+            foreach (var exe_entry in exe_files)
+            {
+                using (var exe_file = VFS.OpenView (exe_entry))
+                {
+                    var exe = new ExeFile (exe_file);
+                    if (!exe.ContainsSection ("code01"))
+                        continue;
+                    try
+                    {
+                        var section = exe.Sections["code01"];
+                        return exe.View.ReadString (section.Offset, section.Size, Encoding.Unicode);
+                    }
+                    catch { /* ignore errors */ }
+                }
+            }
+            var title = Query<CsafOptions> (arcStrings.ArcEncryptedNotice).Title;
             string key;
-            if (!KnownKeys.TryGetValue (title, out key))
-                return DefaultKey;
+            if (string.IsNullOrEmpty (title) || !KnownKeys.TryGetValue (title, out key))
+                return null;
             return key;
         }
 

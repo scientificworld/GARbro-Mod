@@ -885,5 +885,17 @@ namespace GameRes.Formats.Properties {
                 this["PPTitle"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CSAFTitle {
+            get {
+                return ((string)(this["CSAFTitle"]));
+            }
+            set {
+                this["CSAFTitle"] = value;
+            }
+        }
     }
 }
