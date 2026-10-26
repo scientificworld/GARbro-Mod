@@ -362,6 +362,9 @@
     <Compile Include="Ethornell\ImageCBG.cs" />
     <Compile Include="Eushully\AudioAOG.cs" />
     <Compile Include="FamilyAdvSystem\ArcCSAF.cs" />
+    <Compile Include="FamilyAdvSystem\WidgetCSAF.xaml.cs">
+      <DependentUpon>WidgetCSAF.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FC01\ArcMRG0.cs" />
     <Compile Include="FC01\ArcPAK.cs" />
     <Compile Include="FC01\ImageTIL.cs" />
@@ -475,6 +478,7 @@
     <Compile Include="KiriKiri\CzCrypt.cs" />
     <Compile Include="Kurumi\ImageGRA.cs" />
     <Compile Include="Lambda\ArcCLS.cs" />
+    <Compile Include="Lambda\ArcDMF.cs" />
     <Compile Include="Leaf\ArcPX.cs" />
     <Compile Include="Littlewitch\ArcDAT.cs" />
     <Compile Include="LunaSoft\ArcPAC.cs" />
@@ -1296,6 +1300,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ExHibit\WidgetGYU.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FamilyAdvSystem\WidgetCSAF.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
