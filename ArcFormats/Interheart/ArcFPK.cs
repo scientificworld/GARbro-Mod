@@ -54,10 +54,11 @@ namespace GameRes.Formats.CandySoft
             List<Entry> dir = null;
             if (count < 0)
             {
-                count &= 0x7FFFFFFF;
+                int name_size = (count & 0x20000000) != 0 ? 0x104 : 0x18;
+                count &= 0x0FFFFFFF;
                 if (!IsSaneCount (count))
                     return null;
-                dir = ReadEncryptedIndex (file, count);
+                dir = ReadEncryptedIndex (file, count, name_size);
             }
             else
             {
@@ -100,13 +101,12 @@ namespace GameRes.Formats.CandySoft
             return dir;
         }
 
-        private List<Entry> ReadEncryptedIndex (ArcView file, int count)
+        private List<Entry> ReadEncryptedIndex (ArcView file, int count, int name_size)
         {
             uint index_offset = file.View.ReadUInt32 (file.MaxOffset-4);
             if (index_offset < 4 || index_offset >= file.MaxOffset-8)
                 return null;
             var key = file.View.ReadBytes (file.MaxOffset-8, 4);
-            int name_size = 0x18;
             int index_size = count * (12 + name_size);
             var index = file.View.ReadBytes (index_offset, (uint)index_size);
             if (index.Length != index_size)
