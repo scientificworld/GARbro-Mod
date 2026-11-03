@@ -219,6 +219,7 @@
     <Compile Include="KiriKiri\ArcTLG.cs" />
     <Compile Include="Kitsunemimi\ArcPAK.cs" />
     <Compile Include="Kogado\ArcARC.cs" />
+    <Compile Include="Kurimami\ArcBIN.cs" />
     <Compile Include="Ice\ImageIBM.cs" />
     <Compile Include="Ice\ScriptISD.cs" />
     <Compile Include="BlueGale\ImageBBM.cs" />
