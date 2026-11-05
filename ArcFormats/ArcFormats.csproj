@@ -810,6 +810,7 @@
     <Compile Include="StudioEgo\ArcPAK0.cs" />
     <Compile Include="StudioEgo\ImageANT.cs" />
     <Compile Include="Succubus\ArcARC.cs" />
+    <Compile Include="Succubus\ArcVFA.cs" />
     <Compile Include="Succubus\ImageGH.cs" />
     <Compile Include="SuperNekoX\ArcGPC.cs" />
     <Compile Include="Sviu\ArcKLZ.cs" />

@@ -51,12 +51,15 @@ namespace GameRes.Formats
     {
         public override string         Tag => "GENERIC AVI";
         public override string Description => "Generic Audio Video Interleave Format";
-        public override uint     Signature => 0x46464952; // 'RIFF'
+        public override uint     Signature => 0; // 'RIFF'
         public override bool  IsHierarchic => false;
         public override bool      CanWrite => false;
 
         public override ArcFile TryOpen (ArcView file)
         {
+            // 'RIFF' isn't included into signature to avoid auto-detection of the WAV files as archives.
+            if (file.View.ReadUInt32 (0) != 0x46464952)
+                return null;
             if (file.View.ReadUInt32 (8) != 0x20495641) // 'AVI '
                 return null;
             return new WrapSingleFileArchive (file, Path.GetFileNameWithoutExtension (file.Name)+".avi");
