@@ -303,6 +303,9 @@
     <Compile Include="Unknown\ImageCTF.cs" />
     <Compile Include="Uran\ImageDAR.cs" />
     <Compile Include="Uran\ImageNCL.cs" />
+    <Compile Include="Winc\ArcFOS.cs" />
+    <Compile Include="Winc\ArcPAC.cs" />
+    <Compile Include="Winc\ImageV12.cs" />
     <Compile Include="Wing\ImageGEM.cs" />
     <Compile Include="Witch\ArcDAT.cs" />
     <Compile Include="Witch\ArcPCD.cs" />
